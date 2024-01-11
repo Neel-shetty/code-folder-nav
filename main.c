@@ -15,9 +15,15 @@ typedef struct num_map {
 
 num_map folders[1000];
 
-int main() {
+int main(int argc, char *argv[]) {
+
   DIR *d;
   char *wd = "/home/neel/code";
+  if (argc == 1) {
+    char *wd = argv[1];
+  } else if (argc > 2) {
+    printf("only takes in one argument");
+  }
   char *prev_dir = wd;
   int option = -1;
   setlocale(LC_CTYPE, "");
@@ -59,8 +65,13 @@ int main() {
   }
   if (option == 0) {
     char *command;
-    asprintf(&command, "kitty --detach nvim %s", wd);
+    char *cd_into_dir;
+    // asprintf(&command, "kitty --detach nvim %s", wd);
+    asprintf(&cd_into_dir, "cd %s", wd);
+    asprintf(&command, "nvim %s", wd);
+    system(cd_into_dir);
     system(command);
+    system("exit");
   }
   return 0;
 }

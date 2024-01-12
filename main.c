@@ -23,6 +23,7 @@ int main(int argc, char *argv[]) {
   // init variables
   DIR *d;
   char *wd = "/home/neel/code";
+  char *command;
   if (argc == 1) {
     char *wd = argv[1];
   } else if (argc > 2) {
@@ -40,11 +41,17 @@ int main(int argc, char *argv[]) {
 
     // if the selected option is not a directory, prompt again.
     if (!d) {
-      printf("unable to read dir\n");
-      wd = prev_dir;
-      // option = -1;
-      strcpy(option, "-1");
-      continue;
+      // printf("unable to read dir\n");
+      // wd = prev_dir;
+      // // option = -1;
+      // strcpy(option, "-1");
+      // continue;
+
+      // open file
+      asprintf(&command, "xdg-open %s 1>/dev/null 2>&1", wd);
+      system(command);
+      system("exit");
+      break;
     }
 
     // print menu
@@ -72,10 +79,25 @@ int main(int argc, char *argv[]) {
     printf("select the number of the folder you want to go to\n");
     scanf("%s", option);
 
-    // concat string "path + folder name"
+    // concat string (path + folder name)
     char *cd;
     asprintf(&cd, "%s/%s", wd, folders[atoi(option)].name);
-    printf("%s\n", cd);
+    printf("current dir -- %s\n", cd);
+
+    // options to open terminal and file
+    if (*option == 't') {
+      // open dir in terminal
+      asprintf(&command, "kitty --detach %s", wd);
+      system(command);
+      system("exit");
+      break;
+    } else if (*option == 'o') {
+      // open file
+      asprintf(&command, "xdg-open %s 1>/dev/null 2>&1", wd);
+      system(command);
+      system("exit");
+      break;
+    }
 
     // prev dir for fallback incase the option selected is a file
     prev_dir = wd;

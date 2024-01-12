@@ -18,22 +18,7 @@ typedef struct num_map {
 
 num_map folders[1000];
 
-void logic() {}
-
-int main(int argc, char *argv[]) {
-
-  // init variables
-  DIR *d;
-  char *wd = "/home/neel/code";
-  char *command;
-  if (argc == 1) {
-    char *wd = argv[1];
-  } else if (argc > 2) {
-    printf("only takes in one argument");
-  }
-  char *prev_dir = wd;
-
-  // option management
+void logic(DIR *d, char *wd, char *prev_dir, char *command) {
   char *option = malloc(256);
   strcpy(option, "-1");
 
@@ -112,5 +97,25 @@ int main(int argc, char *argv[]) {
     system(command);
     system("exit");
   }
+  return;
+}
+
+int main(int argc, char *argv[]) {
+
+  // init variables
+  DIR *d;
+  char *command;
+  if (argc == 2) {
+    char *wd = argv[1];
+    char *prev_dir = wd;
+    logic(d, wd, prev_dir, command);
+  } else {
+    char *wd = "/home/neel/code";
+    char *prev_dir = wd;
+    logic(d, wd, prev_dir, command);
+  }
+
+  // option management
+  //
   return 0;
 }

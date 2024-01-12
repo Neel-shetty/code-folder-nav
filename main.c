@@ -18,6 +18,27 @@ typedef struct num_map {
 
 num_map folders[1000];
 
+void print_menu(DIR *d) {
+  struct dirent *entries;
+  int i = 1;
+  while ((entries = readdir(d)) != NULL) {
+    // early exit for the current dir and prev dir options
+    if (strcmp(entries->d_name, ".") == 0 ||
+        strcmp(entries->d_name, "..") == 0) {
+      continue;
+    }
+    if (entries->d_type == TYPE_FOLDER) {
+      wprintf(L"dir   %d: %s\n", i, entries->d_name);
+    } else {
+      wprintf(L"file  %d: %s\n", i, entries->d_name);
+    }
+    // store folder info in folders array based on index
+    strcpy(folders[i].name, entries->d_name);
+    folders[i].type = entries->d_type;
+    i++;
+  }
+}
+
 void logic(DIR *d, char *wd, char *prev_dir, char *command) {
   char *option = malloc(256);
   strcpy(option, "-1");
@@ -35,24 +56,7 @@ void logic(DIR *d, char *wd, char *prev_dir, char *command) {
     }
 
     // print menu
-    struct dirent *entries;
-    int i = 1;
-    while ((entries = readdir(d)) != NULL) {
-      // early exit for the current dir and prev dir options
-      if (strcmp(entries->d_name, ".") == 0 ||
-          strcmp(entries->d_name, "..") == 0) {
-        continue;
-      }
-      if (entries->d_type == TYPE_FOLDER) {
-        wprintf(L"dir   %d: %s\n", i, entries->d_name);
-      } else {
-        wprintf(L"file  %d: %s\n", i, entries->d_name);
-      }
-      // store folder info in folders array based on index
-      strcpy(folders[i].name, entries->d_name);
-      folders[i].type = entries->d_type;
-      i++;
-    }
+    print_menu(d);
 
     // take input from user
     printf("select the number of the folder you want to go to\n");

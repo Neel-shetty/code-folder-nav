@@ -18,6 +18,8 @@ typedef struct num_map {
 
 num_map folders[1000];
 
+void logic() {}
+
 int main(int argc, char *argv[]) {
 
   // init variables
@@ -39,14 +41,7 @@ int main(int argc, char *argv[]) {
   while (atoi(option) != 0) {
     d = opendir(wd);
 
-    // if the selected option is not a directory, prompt again.
     if (!d) {
-      // printf("unable to read dir\n");
-      // wd = prev_dir;
-      // // option = -1;
-      // strcpy(option, "-1");
-      // continue;
-
       // open file
       asprintf(&command, "xdg-open %s 1>/dev/null 2>&1", wd);
       system(command);
@@ -63,9 +58,8 @@ int main(int argc, char *argv[]) {
           strcmp(entries->d_name, "..") == 0) {
         continue;
       }
-      if (entries->d_type == TYPE_FILE) {
+      if (entries->d_type == TYPE_FOLDER) {
         wprintf(L"dir   %d: %s\n", i, entries->d_name);
-        // printf("%d: %s\n", i, entries->d_name);
       } else {
         wprintf(L"file  %d: %s\n", i, entries->d_name);
       }

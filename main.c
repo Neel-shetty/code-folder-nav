@@ -19,23 +19,34 @@ typedef struct num_map {
 num_map folders[1000];
 
 void print_menu(DIR *d) {
-  struct dirent *entries;
+  struct dirent **entries;
+  int n = scandir("/home/neel/code/python", &entries, NULL, alphasort);
   int i = 1;
-  while ((entries = readdir(d)) != NULL) {
-    // early exit for the current dir and prev dir options
-    if (strcmp(entries->d_name, ".") == 0 ||
-        strcmp(entries->d_name, "..") == 0) {
-      continue;
-    }
-    if (entries->d_type == TYPE_FOLDER) {
-      wprintf(L"dir   %d: %s\n", i, entries->d_name);
-    } else {
-      wprintf(L"file  %d: %s\n", i, entries->d_name);
-    }
-    // store folder info in folders array based on index
-    strcpy(folders[i].name, entries->d_name);
-    folders[i].type = entries->d_type;
-    i++;
+  // struct dirent *temp[100];
+  // while ((entries = readdir(d)) != NULL) {
+  // early exit for the current dir and prev dir options
+  // if (strcmp(entries->d_name, ".") == 0 ||
+  //     strcmp(entries->d_name, "..") == 0) {
+  //   continue;
+  // }
+  // if (entries->d_type == TYPE_FOLDER) {
+  //   wprintf(L"dir   %d: %s\n", i, entries->d_name);
+  // } else {
+  //   wprintf(L"file  %d: %s\n", i, entries->d_name);
+  // }
+  // // store folder info in folders array based on index
+  // strcpy(folders[i].name, entries->d_name);
+  // folders[i].type = entries->d_type;
+  //   i++;
+  // }
+  // free(entries[0]);
+  // free(entries[1]);
+  for (int j = 0; entries[j] != NULL; j++) {
+
+    // printf("%lu   ", sizeof(entries) / sizeof(entries[0]));
+    printf("%d: %s\n", j, entries[j]->d_name);
+    strcpy(folders[j].name, entries[j]->d_name);
+    free(entries[j]);
   }
 }
 
@@ -110,13 +121,15 @@ int main(int argc, char *argv[]) {
   DIR *d;
   char *command;
   if (argc == 2) {
+    // TODO: move wd up and dont call logic func twice
     char *wd = argv[1];
     char *prev_dir = wd;
     logic(d, wd, prev_dir, command);
   } else {
     char *wd = "/home/neel/code";
     char *prev_dir = wd;
-    logic(d, wd, prev_dir, command);
+    // logic(d, wd, prev_dir, command);
+    print_menu(d);
   }
 
   // option management

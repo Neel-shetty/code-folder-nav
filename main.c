@@ -18,9 +18,36 @@ typedef struct num_map {
 
 num_map folders[1000];
 
-void print_menu(DIR *d) {
+void split_path_file(char **p, char **f, char *pf) {
+
+  /* Find last delimiter. */
+  char *z;
+  for (z = pf + strlen(pf); z >= pf; z--) {
+    if (*z == '/' || *z == '\\')
+      break;
+  }
+
+  if (z >= pf) {
+    /* There is a delimiter: construct separate
+       path and filename fragments. */
+    printf("--> %i\n", z - pf);
+    *p = malloc(z - pf + 1);
+    strncpy(*p, pf, z - pf);
+    (*p)[z - pf] = '\0';
+    *f = malloc(strlen(z));
+    strcpy(*f, z + 1);
+  } else {
+    /* There is no delimiter: the entire
+       string must be a filename. */
+    *p = NULL;
+    *f = malloc(strlen(pf) + 1);
+    strcpy(*f, pf);
+  }
+}
+
+void print_menu(char *wd) {
   struct dirent **entries;
-  int n = scandir("/home/neel/code/python", &entries, NULL, alphasort);
+  int n = scandir(wd, &entries, NULL, alphasort);
   int i = 1;
   // struct dirent *temp[100];
   // while ((entries = readdir(d)) != NULL) {
@@ -41,7 +68,7 @@ void print_menu(DIR *d) {
   // }
   // free(entries[0]);
   // free(entries[1]);
-  for (int j = 0; entries[j] != NULL; j++) {
+  for (int j = 1; entries[j] != NULL; j++) {
 
     // printf("%lu   ", sizeof(entries) / sizeof(entries[0]));
     printf("%d: %s\n", j, entries[j]->d_name);
@@ -67,15 +94,30 @@ void logic(DIR *d, char *wd, char *prev_dir, char *command) {
     }
 
     // print menu
-    print_menu(d);
+    print_menu(wd);
 
     // take input from user
-    printf("select the number of the folder you want to go to\n");
+    printf("select the number of the folder you want to go to (0 to open nvim "
+           "here)\n");
     scanf("%s", option);
 
     // concat string (path + folder name)
     char *cd;
-    asprintf(&cd, "%s/%s", wd, folders[atoi(option)].name);
+    if (strcmp(folders[atoi(option)].name, "..") == 0) {
+      char *token = strtok(wd, "/");
+      char **path, **last_dir;
+      split_path_file(path, last_dir, wd);
+      printf("%s - %s", *path, *last_dir);
+      while (token != NULL) {
+        // printf("%s\n", token);
+        asprintf(&cd, "%s/%s", cd, token);
+        printf("%s\n", cd);
+        token = strtok(NULL, "/");
+      }
+    } else {
+
+      asprintf(&cd, "%s/%s", wd, folders[atoi(option)].name);
+    }
     printf("current dir -- %s\n", cd);
 
     // options to open terminal and file
@@ -128,8 +170,8 @@ int main(int argc, char *argv[]) {
   } else {
     char *wd = "/home/neel/code";
     char *prev_dir = wd;
-    // logic(d, wd, prev_dir, command);
-    print_menu(d);
+    logic(d, wd, prev_dir, command);
+    // print_menu(d);
   }
 
   // option management

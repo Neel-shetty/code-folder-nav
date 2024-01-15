@@ -1,4 +1,4 @@
-##TODO
+## TODO
 - refactor code ✅ ig
 - pass initial folder location as argument ✅
 - sorting options ✅

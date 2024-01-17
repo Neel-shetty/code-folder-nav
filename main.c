@@ -19,62 +19,42 @@ typedef struct num_map {
 
 num_map folders[1000];
 
-void split_path_file(char **p, char **f, char *pf) {
-
-  /* Find last delimiter. */
-  char *z;
-  for (z = pf + strlen(pf); z >= pf; z--) {
-    if (*z == '/' || *z == '\\')
-      break;
-  }
-
-  if (z >= pf) {
-    /* There is a delimiter: construct separate
-       path and filename fragments. */
-    printw("--> %i\n", z - pf);
-    *p = malloc(z - pf + 1);
-    strncpy(*p, pf, z - pf);
-    (*p)[z - pf] = '\0';
-    *f = malloc(strlen(z));
-    strcpy(*f, z + 1);
-  } else {
-    /* There is no delimiter: the entire
-       string must be a filename. */
-    *p = NULL;
-    *f = malloc(strlen(pf) + 1);
-    strcpy(*f, pf);
-  }
-}
+// void split_path_file(char **p, char **f, char *pf) {
+//
+//   /* Find last delimiter. */
+//   char *z;
+//   for (z = pf + strlen(pf); z >= pf; z--) {
+//     if (*z == '/' || *z == '\\')
+//       break;
+//   }
+//
+//   if (z >= pf) {
+//     /* There is a delimiter: construct separate
+//        path and filename fragments. */
+//     printw("--> %i\n", z - pf);
+//     *p = malloc(z - pf + 1);
+//     strncpy(*p, pf, z - pf);
+//     (*p)[z - pf] = '\0';
+//     *f = malloc(strlen(z));
+//     strcpy(*f, z + 1);
+//   } else {
+//     /* There is no delimiter: the entire
+//        string must be a filename. */
+//     *p = NULL;
+//     *f = malloc(strlen(pf) + 1);
+//     strcpy(*f, pf);
+//   }
+// }
 
 void print_menu(char *wd) {
   struct dirent **entries;
   int n = scandir(wd, &entries, NULL, alphasort);
-  int i = 1;
-  // struct dirent *temp[100];
-  // while ((entries = readdir(d)) != NULL) {
-  // early exit for the current dir and prev dir options
-  // if (strcmp(entries->d_name, ".") == 0 ||
-  //     strcmp(entries->d_name, "..") == 0) {
-  //   continue;
-  // }
-  // if (entries->d_type == TYPE_FOLDER) {
-  //   wprintf(L"dir   %d: %s\n", i, entries->d_name);
-  // } else {
-  //   wprintf(L"file  %d: %s\n", i, entries->d_name);
-  // }
-  // // store folder info in folders array based on index
-  // strcpy(folders[i].name, entries->d_name);
-  // folders[i].type = entries->d_type;
-  //   i++;
-  // }
-  // free(entries[0]);
-  // free(entries[1]);
-  for (int j = 1; entries[j] != NULL; j++) {
 
+  for (int j = 1; entries[j] != NULL; j++) {
     // printf("%lu   ", sizeof(entries) / sizeof(entries[0]));
     printw("%d: %s\n", j, entries[j]->d_name);
     strcpy(folders[j].name, entries[j]->d_name);
-    free(entries[j]);
+    // free(entries[j]);
   }
   refresh();
 }
@@ -172,7 +152,7 @@ int main(int argc, char *argv[]) {
 
   // init variables
   initscr(); /* Start curses mode 		  */
-  raw();
+  // raw();
   keypad(stdscr, TRUE);
   DIR *d;
   char *command;

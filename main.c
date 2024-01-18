@@ -54,7 +54,7 @@ void print_menu(char *wd) {
     // printf("%lu   ", sizeof(entries) / sizeof(entries[0]));
     printw("%d: %s\n", j, entries[j]->d_name);
     strcpy(folders[j].name, entries[j]->d_name);
-    // free(entries[j]);
+    free(entries[j]);
   }
   refresh();
 }

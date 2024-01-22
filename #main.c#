@@ -19,25 +19,55 @@ typedef struct num_map {
 
 num_map folders[1000];
 
+// void split_path_file(char **p, char **f, char *pf) {
+//
+//   /* Find last delimiter. */
+//   char *z;
+//   for (z = pf + strlen(pf); z >= pf; z--) {
+//     if (*z == '/' || *z == '\\')
+//       break;
+//   }
+//
+//   if (z >= pf) {
+//     /* There is a delimiter: construct separate
+//        path and filename fragments. */
+//     printw("--> %i\n", z - pf);
+//     *p = malloc(z - pf + 1);
+//     strncpy(*p, pf, z - pf);
+//     (*p)[z - pf] = '\0';
+//     *f = malloc(strlen(z));
+//     strcpy(*f, z + 1);
+//   } else {
+//     /* There is no delimiter: the entire
+//        string must be a filename. */
+//     *p = NULL;
+//     *f = malloc(strlen(pf) + 1);
+//     strcpy(*f, pf);
+//   }
+// }
+
 void print_menu(char *wd) {
   struct dirent **entries;
   int n = scandir(wd, &entries, NULL, alphasort);
 
   for (int j = 1; entries[j] != NULL; j++) {
+    // printf("%lu   ", sizeof(entries) / sizeof(entries[0]));
     printw("%d: %s\n", j, entries[j]->d_name);
     strcpy(folders[j].name, entries[j]->d_name);
+    // free(entries[j]);
   }
   refresh();
 }
 
 void logic(DIR *d, char *wd, char *prev_dir, char *command) {
   char *option = malloc(256);
+  // char option;
   strcpy(option, "-1");
+  // option = -1;
 
   // file menu loop
-  while (strcmp(option, "0") != 0) {
-    if (strcmp(option, "q") == 0)
-      break;
+  while (atoi(option) != 0) {
+    // while (option != 48) {
     d = opendir(wd);
 
     if (!d) {
@@ -54,29 +84,45 @@ void logic(DIR *d, char *wd, char *prev_dir, char *command) {
     // take input from user
     printw("select the number of the folder you want to go to (0 to open nvim "
            "here)\n");
-    int PATH_LENGTH = 255;
-    getnstr(option, PATH_LENGTH);
-    clear();
+    getnstr(option, 255);
+    // printw("\n%d, %s \n", atoi(option), folders[atoi(option)].name);
+    // clear();
+    // scanf("%s", option);
 
+    // concat string (path + folder name)
     char *cd;
+    // if (strcmp(folders[atoi(option)].name, "..") == 0) {
+    //   char *token = strtok(wd, "/");
+    //   char **path, **last_dir;
+    //   split_path_file(path, last_dir, wd);
+    //   printw("%s - %s", *path, *last_dir);
+    //   while (token != NULL) {
+    //     // printf("%s\n", token);
+    //     asprintf(&cd, "%s/%s", cd, token);
+    //     printw("%s\n", cd);
+    //     token = strtok(NULL, "/");
+    //   }
+    // } else {
 
     asprintf(&cd, "%s/%s", wd, folders[atoi(option)].name);
+    // asprintf(&cd, "%s/%s", wd, folders[option - 48].name);
+    // }
     printw("current dir -- %s\n", cd);
 
     // options to open terminal and file
-    if (*option == 't') {
-      // open dir in terminal
-      asprintf(&command, "kitty --detach %s", wd);
-      system(command);
-      system("exit");
-      break;
-    } else if (*option == 'o') {
-      // open file
-      asprintf(&command, "xdg-open %s 1>/dev/null 2>&1", wd);
-      system(command);
-      system("exit");
-      break;
-    }
+    // if (*option == 't') {
+    //   // open dir in terminal
+    //   asprintf(&command, "kitty --detach %s", wd);
+    //   system(command);
+    //   system("exit");
+    //   break;
+    // } else if (*option == 'o') {
+    //   // open file
+    //   asprintf(&command, "xdg-open %s 1>/dev/null 2>&1", wd);
+    //   system(command);
+    //   system("exit");
+    //   break;
+    // }
 
     // prev dir for fallback incase the option selected is a file
     prev_dir = wd;
@@ -85,10 +131,13 @@ void logic(DIR *d, char *wd, char *prev_dir, char *command) {
   }
 
   // when quit
-  if (strcmp(option, "0") == 0) {
+  if (atoi(option) == 0) {
+    // if (option == 48) {
     char *command;
     char *cd_into_dir;
+
     // concact strings (command + path)
+    // asprintf(&command, "kitty --detach nvim %s", wd);
     asprintf(&cd_into_dir, "cd %s", wd);
     asprintf(&command, "nvim %s", wd);
     system(cd_into_dir);
@@ -103,7 +152,7 @@ int main(int argc, char *argv[]) {
 
   // init variables
   initscr(); /* Start curses mode 		  */
-  raw();
+  // raw();
   keypad(stdscr, TRUE);
   DIR *d;
   char *command;
@@ -119,6 +168,7 @@ int main(int argc, char *argv[]) {
     // print_menu(d);
   }
 
+  // option management
   endwin(); /* End curses mode		  */
   return 0;
 }

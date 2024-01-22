@@ -116,7 +116,6 @@ int main(int argc, char *argv[]) {
     char *wd = "/home/neel/code";
     char *prev_dir = wd;
     logic(d, wd, prev_dir, command);
-    // print_menu(d);
   }
 
   endwin(); /* End curses mode		  */

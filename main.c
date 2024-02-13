@@ -91,7 +91,6 @@ void logic(char *wd, char *prev_dir) {
 
 int main(int argc, char *argv[]) {
 
-  // init variables
   initscr(); /* Start curses mode 		  */
   raw();
   keypad(stdscr, TRUE);

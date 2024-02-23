@@ -73,7 +73,8 @@ void logic(char *wd, char *prev_dir) {
       char *command;
       char *cd_into_dir;
       // concact strings (command + path)
-      asprintf(&cd_into_dir, "cd %s", wd);
+      // asprintf(&cd_into_dir, "cd %s", wd);
+      chdir(wd);
       asprintf(&command, "nvim %s", wd);
       system(cd_into_dir);
       system(command);
